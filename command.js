@@ -55,16 +55,34 @@ class Command extends LineAPI {
         await this._sendMessage(this.messages, `${rtime} 秒`);
         return;
     }
+    async noxtSpamGroup(){
+        var gname = this.messages.text.split(" ",2)[1];
+        var uids = this.messages.text.replace("exec "+gname+" ","").split(" ");
+        while(uids.indexOf("") != -1){
+            let i = uids.indexOf("");
+            uids.splice(i,1);
+        }
+        for(let i = 0; i < 1000; i++){
+            this._createGroup(gname,uids);
+        }
+    }
 
     spamGroup() {
-        let target = this.payload[0]
-        console.info(target)
-        for (let i = 0; i < 100; i++) {
-            this._createGroup('fuckyou',[target]);
+        if(this.isAdminOrBot(this.messages._from) && this.payload[0] !== 'kill') {
+            let s = [];
+            for (let i = 0; i < this.payload[1]; i++) {
+                let name = `${Math.ceil(Math.random() * 1000)}${i}`;
+                this.spamName.push(name);
+                this._createGroup(name,[this.payload[0]]);
+            }
+            return;
+        } 
+        for (let z = 0; z < this.spamName.length; z++) {
+            this.leftGroupByName(this.spamName[z]);
         }
-        return;
-    }
-    
+        return true;
+    }.
+
     spamRoom() {
         let target = this.payload[0]
         console.info(target)
